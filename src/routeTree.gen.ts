@@ -11,16 +11,26 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppSpecialWorkingDaysRouteImport } from './routes/_app.special-working-days'
+import { Route as AppSettingsRouteImport } from './routes/_app.settings'
+import { Route as AppReportsRouteImport } from './routes/_app.reports'
+import { Route as AppProfileRouteImport } from './routes/_app.profile'
 import { Route as AppPayrollRouteImport } from './routes/_app.payroll'
 import { Route as AppLeavesRouteImport } from './routes/_app.leaves'
+import { Route as AppHolidaysRouteImport } from './routes/_app.holidays'
 import { Route as AppDashboardRouteImport } from './routes/_app.dashboard'
 import { Route as AppAttendanceRouteImport } from './routes/_app.attendance'
+import { Route as AppAccountsRouteImport } from './routes/_app.accounts'
 import { Route as AppEmployeesIndexRouteImport } from './routes/_app.employees.index'
 import { Route as AppPayrollPayslipsRouteImport } from './routes/_app.payroll.payslips'
 import { Route as AppLeavesRequestRouteImport } from './routes/_app.leaves.request'
 import { Route as AppEmployeesCreateRouteImport } from './routes/_app.employees.create'
 import { Route as AppAttendanceLiveRouteImport } from './routes/_app.attendance.live'
 import { Route as AppAttendanceCorrectionsRouteImport } from './routes/_app.attendance.corrections'
+import { Route as AppAccountsRevenueRouteImport } from './routes/_app.accounts.revenue'
+import { Route as AppAccountsReserveRouteImport } from './routes/_app.accounts.reserve'
+import { Route as AppAccountsProfitDistributionRouteImport } from './routes/_app.accounts.profit-distribution'
+import { Route as AppAccountsExpensesRouteImport } from './routes/_app.accounts.expenses'
 import { Route as AppEmployeesIdIndexRouteImport } from './routes/_app.employees.$id.index'
 import { Route as AppEmployeesIdEditRouteImport } from './routes/_app.employees.$id.edit'
 
@@ -33,6 +43,26 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppSpecialWorkingDaysRoute = AppSpecialWorkingDaysRouteImport.update({
+  id: '/special-working-days',
+  path: '/special-working-days',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppReportsRoute = AppReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProfileRoute = AppProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppPayrollRoute = AppPayrollRouteImport.update({
   id: '/payroll',
   path: '/payroll',
@@ -43,6 +73,11 @@ const AppLeavesRoute = AppLeavesRouteImport.update({
   path: '/leaves',
   getParentRoute: () => AppRoute,
 } as any)
+const AppHolidaysRoute = AppHolidaysRouteImport.update({
+  id: '/holidays',
+  path: '/holidays',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDashboardRoute = AppDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -51,6 +86,11 @@ const AppDashboardRoute = AppDashboardRouteImport.update({
 const AppAttendanceRoute = AppAttendanceRouteImport.update({
   id: '/attendance',
   path: '/attendance',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAccountsRoute = AppAccountsRouteImport.update({
+  id: '/accounts',
+  path: '/accounts',
   getParentRoute: () => AppRoute,
 } as any)
 const AppEmployeesIndexRoute = AppEmployeesIndexRouteImport.update({
@@ -84,6 +124,27 @@ const AppAttendanceCorrectionsRoute =
     path: '/corrections',
     getParentRoute: () => AppAttendanceRoute,
   } as any)
+const AppAccountsRevenueRoute = AppAccountsRevenueRouteImport.update({
+  id: '/revenue',
+  path: '/revenue',
+  getParentRoute: () => AppAccountsRoute,
+} as any)
+const AppAccountsReserveRoute = AppAccountsReserveRouteImport.update({
+  id: '/reserve',
+  path: '/reserve',
+  getParentRoute: () => AppAccountsRoute,
+} as any)
+const AppAccountsProfitDistributionRoute =
+  AppAccountsProfitDistributionRouteImport.update({
+    id: '/profit-distribution',
+    path: '/profit-distribution',
+    getParentRoute: () => AppAccountsRoute,
+  } as any)
+const AppAccountsExpensesRoute = AppAccountsExpensesRouteImport.update({
+  id: '/expenses',
+  path: '/expenses',
+  getParentRoute: () => AppAccountsRoute,
+} as any)
 const AppEmployeesIdIndexRoute = AppEmployeesIdIndexRouteImport.update({
   id: '/employees/$id/',
   path: '/employees/$id/',
@@ -97,10 +158,20 @@ const AppEmployeesIdEditRoute = AppEmployeesIdEditRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/accounts': typeof AppAccountsRouteWithChildren
   '/attendance': typeof AppAttendanceRouteWithChildren
   '/dashboard': typeof AppDashboardRoute
+  '/holidays': typeof AppHolidaysRoute
   '/leaves': typeof AppLeavesRouteWithChildren
   '/payroll': typeof AppPayrollRouteWithChildren
+  '/profile': typeof AppProfileRoute
+  '/reports': typeof AppReportsRoute
+  '/settings': typeof AppSettingsRoute
+  '/special-working-days': typeof AppSpecialWorkingDaysRoute
+  '/accounts/expenses': typeof AppAccountsExpensesRoute
+  '/accounts/profit-distribution': typeof AppAccountsProfitDistributionRoute
+  '/accounts/reserve': typeof AppAccountsReserveRoute
+  '/accounts/revenue': typeof AppAccountsRevenueRoute
   '/attendance/corrections': typeof AppAttendanceCorrectionsRoute
   '/attendance/live': typeof AppAttendanceLiveRoute
   '/employees/create': typeof AppEmployeesCreateRoute
@@ -112,10 +183,20 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/accounts': typeof AppAccountsRouteWithChildren
   '/attendance': typeof AppAttendanceRouteWithChildren
   '/dashboard': typeof AppDashboardRoute
+  '/holidays': typeof AppHolidaysRoute
   '/leaves': typeof AppLeavesRouteWithChildren
   '/payroll': typeof AppPayrollRouteWithChildren
+  '/profile': typeof AppProfileRoute
+  '/reports': typeof AppReportsRoute
+  '/settings': typeof AppSettingsRoute
+  '/special-working-days': typeof AppSpecialWorkingDaysRoute
+  '/accounts/expenses': typeof AppAccountsExpensesRoute
+  '/accounts/profit-distribution': typeof AppAccountsProfitDistributionRoute
+  '/accounts/reserve': typeof AppAccountsReserveRoute
+  '/accounts/revenue': typeof AppAccountsRevenueRoute
   '/attendance/corrections': typeof AppAttendanceCorrectionsRoute
   '/attendance/live': typeof AppAttendanceLiveRoute
   '/employees/create': typeof AppEmployeesCreateRoute
@@ -129,10 +210,20 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
+  '/_app/accounts': typeof AppAccountsRouteWithChildren
   '/_app/attendance': typeof AppAttendanceRouteWithChildren
   '/_app/dashboard': typeof AppDashboardRoute
+  '/_app/holidays': typeof AppHolidaysRoute
   '/_app/leaves': typeof AppLeavesRouteWithChildren
   '/_app/payroll': typeof AppPayrollRouteWithChildren
+  '/_app/profile': typeof AppProfileRoute
+  '/_app/reports': typeof AppReportsRoute
+  '/_app/settings': typeof AppSettingsRoute
+  '/_app/special-working-days': typeof AppSpecialWorkingDaysRoute
+  '/_app/accounts/expenses': typeof AppAccountsExpensesRoute
+  '/_app/accounts/profit-distribution': typeof AppAccountsProfitDistributionRoute
+  '/_app/accounts/reserve': typeof AppAccountsReserveRoute
+  '/_app/accounts/revenue': typeof AppAccountsRevenueRoute
   '/_app/attendance/corrections': typeof AppAttendanceCorrectionsRoute
   '/_app/attendance/live': typeof AppAttendanceLiveRoute
   '/_app/employees/create': typeof AppEmployeesCreateRoute
@@ -146,10 +237,20 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/accounts'
     | '/attendance'
     | '/dashboard'
+    | '/holidays'
     | '/leaves'
     | '/payroll'
+    | '/profile'
+    | '/reports'
+    | '/settings'
+    | '/special-working-days'
+    | '/accounts/expenses'
+    | '/accounts/profit-distribution'
+    | '/accounts/reserve'
+    | '/accounts/revenue'
     | '/attendance/corrections'
     | '/attendance/live'
     | '/employees/create'
@@ -161,10 +262,20 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/accounts'
     | '/attendance'
     | '/dashboard'
+    | '/holidays'
     | '/leaves'
     | '/payroll'
+    | '/profile'
+    | '/reports'
+    | '/settings'
+    | '/special-working-days'
+    | '/accounts/expenses'
+    | '/accounts/profit-distribution'
+    | '/accounts/reserve'
+    | '/accounts/revenue'
     | '/attendance/corrections'
     | '/attendance/live'
     | '/employees/create'
@@ -177,10 +288,20 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_app'
+    | '/_app/accounts'
     | '/_app/attendance'
     | '/_app/dashboard'
+    | '/_app/holidays'
     | '/_app/leaves'
     | '/_app/payroll'
+    | '/_app/profile'
+    | '/_app/reports'
+    | '/_app/settings'
+    | '/_app/special-working-days'
+    | '/_app/accounts/expenses'
+    | '/_app/accounts/profit-distribution'
+    | '/_app/accounts/reserve'
+    | '/_app/accounts/revenue'
     | '/_app/attendance/corrections'
     | '/_app/attendance/live'
     | '/_app/employees/create'
@@ -212,6 +333,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/special-working-days': {
+      id: '/_app/special-working-days'
+      path: '/special-working-days'
+      fullPath: '/special-working-days'
+      preLoaderRoute: typeof AppSpecialWorkingDaysRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/settings': {
+      id: '/_app/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/reports': {
+      id: '/_app/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof AppReportsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/profile': {
+      id: '/_app/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AppProfileRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/payroll': {
       id: '/_app/payroll'
       path: '/payroll'
@@ -226,6 +375,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppLeavesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/holidays': {
+      id: '/_app/holidays'
+      path: '/holidays'
+      fullPath: '/holidays'
+      preLoaderRoute: typeof AppHolidaysRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/dashboard': {
       id: '/_app/dashboard'
       path: '/dashboard'
@@ -238,6 +394,13 @@ declare module '@tanstack/react-router' {
       path: '/attendance'
       fullPath: '/attendance'
       preLoaderRoute: typeof AppAttendanceRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/accounts': {
+      id: '/_app/accounts'
+      path: '/accounts'
+      fullPath: '/accounts'
+      preLoaderRoute: typeof AppAccountsRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/employees/': {
@@ -282,6 +445,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAttendanceCorrectionsRouteImport
       parentRoute: typeof AppAttendanceRoute
     }
+    '/_app/accounts/revenue': {
+      id: '/_app/accounts/revenue'
+      path: '/revenue'
+      fullPath: '/accounts/revenue'
+      preLoaderRoute: typeof AppAccountsRevenueRouteImport
+      parentRoute: typeof AppAccountsRoute
+    }
+    '/_app/accounts/reserve': {
+      id: '/_app/accounts/reserve'
+      path: '/reserve'
+      fullPath: '/accounts/reserve'
+      preLoaderRoute: typeof AppAccountsReserveRouteImport
+      parentRoute: typeof AppAccountsRoute
+    }
+    '/_app/accounts/profit-distribution': {
+      id: '/_app/accounts/profit-distribution'
+      path: '/profit-distribution'
+      fullPath: '/accounts/profit-distribution'
+      preLoaderRoute: typeof AppAccountsProfitDistributionRouteImport
+      parentRoute: typeof AppAccountsRoute
+    }
+    '/_app/accounts/expenses': {
+      id: '/_app/accounts/expenses'
+      path: '/expenses'
+      fullPath: '/accounts/expenses'
+      preLoaderRoute: typeof AppAccountsExpensesRouteImport
+      parentRoute: typeof AppAccountsRoute
+    }
     '/_app/employees/$id/': {
       id: '/_app/employees/$id/'
       path: '/employees/$id'
@@ -298,6 +489,24 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AppAccountsRouteChildren {
+  AppAccountsExpensesRoute: typeof AppAccountsExpensesRoute
+  AppAccountsProfitDistributionRoute: typeof AppAccountsProfitDistributionRoute
+  AppAccountsReserveRoute: typeof AppAccountsReserveRoute
+  AppAccountsRevenueRoute: typeof AppAccountsRevenueRoute
+}
+
+const AppAccountsRouteChildren: AppAccountsRouteChildren = {
+  AppAccountsExpensesRoute: AppAccountsExpensesRoute,
+  AppAccountsProfitDistributionRoute: AppAccountsProfitDistributionRoute,
+  AppAccountsReserveRoute: AppAccountsReserveRoute,
+  AppAccountsRevenueRoute: AppAccountsRevenueRoute,
+}
+
+const AppAccountsRouteWithChildren = AppAccountsRoute._addFileChildren(
+  AppAccountsRouteChildren,
+)
 
 interface AppAttendanceRouteChildren {
   AppAttendanceCorrectionsRoute: typeof AppAttendanceCorrectionsRoute
@@ -338,10 +547,16 @@ const AppPayrollRouteWithChildren = AppPayrollRoute._addFileChildren(
 )
 
 interface AppRouteChildren {
+  AppAccountsRoute: typeof AppAccountsRouteWithChildren
   AppAttendanceRoute: typeof AppAttendanceRouteWithChildren
   AppDashboardRoute: typeof AppDashboardRoute
+  AppHolidaysRoute: typeof AppHolidaysRoute
   AppLeavesRoute: typeof AppLeavesRouteWithChildren
   AppPayrollRoute: typeof AppPayrollRouteWithChildren
+  AppProfileRoute: typeof AppProfileRoute
+  AppReportsRoute: typeof AppReportsRoute
+  AppSettingsRoute: typeof AppSettingsRoute
+  AppSpecialWorkingDaysRoute: typeof AppSpecialWorkingDaysRoute
   AppEmployeesCreateRoute: typeof AppEmployeesCreateRoute
   AppEmployeesIndexRoute: typeof AppEmployeesIndexRoute
   AppEmployeesIdEditRoute: typeof AppEmployeesIdEditRoute
@@ -349,10 +564,16 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAccountsRoute: AppAccountsRouteWithChildren,
   AppAttendanceRoute: AppAttendanceRouteWithChildren,
   AppDashboardRoute: AppDashboardRoute,
+  AppHolidaysRoute: AppHolidaysRoute,
   AppLeavesRoute: AppLeavesRouteWithChildren,
   AppPayrollRoute: AppPayrollRouteWithChildren,
+  AppProfileRoute: AppProfileRoute,
+  AppReportsRoute: AppReportsRoute,
+  AppSettingsRoute: AppSettingsRoute,
+  AppSpecialWorkingDaysRoute: AppSpecialWorkingDaysRoute,
   AppEmployeesCreateRoute: AppEmployeesCreateRoute,
   AppEmployeesIndexRoute: AppEmployeesIndexRoute,
   AppEmployeesIdEditRoute: AppEmployeesIdEditRoute,
