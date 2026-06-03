@@ -13,7 +13,7 @@ import {
 } from "recharts";
 import {
   attendanceTrend, payrollTrend, revenueExpenseTrend, profitDistribution,
-  formatPKR, leaveRequests, expenses, attendanceRecords,
+  formatPKR, formatPKRCompact, leaveRequests, expenses, attendanceRecords,
 } from "@/lib/mock-data";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 
