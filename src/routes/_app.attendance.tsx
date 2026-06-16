@@ -1,70 +1,269 @@
-import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Link,
+  Outlet,
+  useRouterState,
+} from "@tanstack/react-router";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { StatCard } from "@/components/shared/StatCard";
 import { DataTable } from "@/components/shared/DataTable";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { Button } from "@/components/ui/button";
-import { attendanceRecords, type AttendanceRecord } from "@/lib/mock-data";
-import { UserCheck, UserX, Clock, AlertTriangle, Activity, Download } from "lucide-react";
+import {
+  UserCheck,
+  UserX,
+  Clock,
+  AlertTriangle,
+  Activity,
+  Download,
+} from "lucide-react";
+import { useAttendance } from "@/hooks/useAttendance";
+import type { AttendanceRecord } from "@/lib/api/attendance";
+import { useEmployees } from "@/hooks/useEmployees";
 
 export const Route = createFileRoute("/_app/attendance")({
   component: AttendanceLayout,
 });
 
+function minutesToHours(minutes?: number) {
+  return (Number(minutes || 0) / 60).toFixed(2);
+}
+
+function formatDateTime(value?: string) {
+  if (!value) return "—";
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) return String(value);
+
+  return date.toLocaleString("en-PK", {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function isLate(value: AttendanceRecord["isLate"]) {
+  return value === true || value === "TRUE";
+}
+
 function AttendanceLayout() {
   const path = useRouterState({ select: (s) => s.location.pathname });
+
   const tabs = [
     { url: "/attendance", label: "Overview" },
     { url: "/attendance/live", label: "Live Monitoring" },
     { url: "/attendance/corrections", label: "Corrections" },
   ];
+
   const isRoot = path === "/attendance";
+
   return (
     <div>
       <PageHeader
         title="Attendance"
         description="Monitor check-ins, breaks and working hours across the team."
-        actions={<Button variant="outline" size="sm"><Download className="mr-1.5 h-3.5 w-3.5" />Export CSV</Button>}
+        actions={
+          <Button variant="outline" size="sm">
+            <Download className="mr-1.5 h-3.5 w-3.5" />
+            Export CSV
+          </Button>
+        }
       />
+
       <div className="mb-6 inline-flex rounded-xl border bg-card p-1">
         {tabs.map((t) => {
           const active = path === t.url;
+
           return (
-            <Link key={t.url} to={t.url} className={`rounded-lg px-3.5 py-1.5 text-xs font-medium transition ${active ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+            <Link
+              key={t.url}
+              to={t.url}
+              className={`rounded-lg px-3.5 py-1.5 text-xs font-medium transition ${
+                active
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
               {t.label}
             </Link>
           );
         })}
       </div>
+
       {isRoot ? <AttendanceOverview /> : <Outlet />}
     </div>
   );
 }
 
 function AttendanceOverview() {
+  const { data: attendanceRecords = [], isLoading, error } = useAttendance();
+
+  const { data: employeesRaw = [] } = useEmployees();
+
+  const employees = Array.isArray(employeesRaw)
+    ? employeesRaw
+    : [];
+
+  function getEmployeeName(employeeId?: string) {
+    const employee = employees.find(
+      (e) => e.employeeId === employeeId
+    );
+
+    return employee?.name || employeeId || "Unknown";
+  }
+
+  if (isLoading) {
+    return (
+      <div className="rounded-2xl border bg-card p-6 text-sm text-muted-foreground">
+        Loading attendance...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-sm text-red-700">
+        {error instanceof Error ? error.message : "Something went wrong"}
+      </div>
+    );
+  }
+  
+
+  const present = attendanceRecords.filter(
+    (r) => r.attendanceStatus === "Present"
+  ).length;
+
+  const absent = attendanceRecords.filter(
+    (r) => r.attendanceStatus === "Absent"
+  ).length;
+
+  const halfDay = attendanceRecords.filter(
+    (r) => r.attendanceStatus === "Half Day"
+  ).length;
+
+  const late = attendanceRecords.filter((r) => isLate(r.isLate)).length;
+
+  const totalDeficitMinutes = attendanceRecords.reduce(
+    (sum, r) => sum + Number(r.deficitMinutes || 0),
+    0
+  );
+
+  const attendanceRate =
+    attendanceRecords.length > 0
+      ? Math.round((present / attendanceRecords.length) * 100)
+      : 0;
+
   return (
     <>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
-        <StatCard label="Present" value="41" icon={UserCheck} tone="success" />
-        <StatCard label="Absent" value="3" icon={UserX} tone="danger" />
-        <StatCard label="Late" value="4" icon={Clock} tone="warning" />
-        <StatCard label="Deficit Hours" value="6.5h" icon={AlertTriangle} tone="warning" />
-        <StatCard label="Attendance Rate" value="93%" icon={Activity} tone="accent" />
+        <StatCard label="Present" value={present} icon={UserCheck} tone="success" />
+        <StatCard label="Absent" value={absent} icon={UserX} tone="danger" />
+        <StatCard label="Late" value={late} icon={Clock} tone="warning" />
+        <StatCard
+          label="Deficit Hours"
+          value={`${minutesToHours(totalDeficitMinutes)}h`}
+          icon={AlertTriangle}
+          tone="warning"
+        />
+        <StatCard
+          label="Attendance Rate"
+          value={`${attendanceRate}%`}
+          icon={Activity}
+          tone="accent"
+        />
       </div>
+
       <div className="mt-6">
         <DataTable<AttendanceRecord>
-          rowKey={(r) => r.id}
+          rowKey={(r) => r.attendanceId}
           data={attendanceRecords}
           columns={[
-            { key: "employee", header: "Employee", render: (r) => <span className="font-medium">{r.employeeName}</span> },
-            { key: "checkIn", header: "Check In", render: (r) => r.checkIn ?? "—" },
-            { key: "checkOut", header: "Check Out", render: (r) => r.checkOut ?? "—" },
-            { key: "break", header: "Break", render: (r) => `${r.breakStart}–${r.breakEnd}` },
-            { key: "workingHours", header: "Hours", render: (r) => <span className="tabular-nums">{r.workingHours.toFixed(2)}</span> },
-            { key: "deficitHours", header: "Deficit", render: (r) => <span className="tabular-nums">{r.deficitHours.toFixed(2)}</span> },
-            { key: "status", header: "Status", render: (r) => <StatusBadge status={r.status} /> },
-            { key: "location", header: "Location" },
-            { key: "ipAddress", header: "IP", render: (r) => <span className="font-mono text-xs text-muted-foreground">{r.ipAddress}</span> },
+            {
+              key: "employee",
+              header: "Employee",
+              render: (r) => (
+                <span className="font-medium">
+                  {r.employeeName || getEmployeeName(r.employeeId)}
+                </span>
+              ),
+            },
+            {
+              key: "attendanceDate",
+              header: "Date",
+              render: (r) => r.attendanceDate || "—",
+            },
+            {
+              key: "checkIn",
+              header: "Check In",
+              render: (r) => formatDateTime(r.checkIn),
+            },
+            {
+              key: "checkOut",
+              header: "Check Out",
+              render: (r) => formatDateTime(r.checkOut),
+            },
+            {
+              key: "break",
+              header: "Break",
+              render: (r) =>
+                r.breakStart || r.breakEnd
+                  ? `${formatDateTime(r.breakStart)} – ${formatDateTime(
+                      r.breakEnd
+                    )}`
+                  : "—",
+            },
+            {
+              key: "workingMinutes",
+              header: "Hours",
+              render: (r) => (
+                <span className="tabular-nums">
+                  {minutesToHours(r.workingMinutes)}
+                </span>
+              ),
+            },
+            {
+              key: "deficitMinutes",
+              header: "Deficit",
+              render: (r) => (
+                <span className="tabular-nums">
+                  {minutesToHours(r.deficitMinutes)}
+                </span>
+              ),
+            },
+            {
+              key: "late",
+              header: "Late",
+              render: (r) =>
+                isLate(r.isLate) ? (
+                  <StatusBadge status="Late" />
+                ) : (
+                  <span className="text-xs text-muted-foreground">No</span>
+                ),
+            },
+            {
+              key: "status",
+              header: "Status",
+              render: (r) => <StatusBadge status={r.attendanceStatus} />,
+            },
+            {
+              key: "location",
+              header: "Location",
+              render: (r) =>
+                r.latitude && r.longitude
+                  ? `${r.latitude}, ${r.longitude}`
+                  : "—",
+            },
+            {
+              key: "ipAddress",
+              header: "IP",
+              render: (r) => (
+                <span className="font-mono text-xs text-muted-foreground">
+                  {r.ipAddress || "—"}
+                </span>
+              ),
+            },
           ]}
         />
       </div>

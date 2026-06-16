@@ -3,35 +3,198 @@ import { DataTable } from "@/components/shared/DataTable";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
-
-interface Correction { id: string; employee: string; date: string; reason: string; requestedAt: string; status: string; }
-const data: Correction[] = [
-  { id: "c1", employee: "Hira Saleem", date: "2026-05-30", reason: "Forgot to check out at 6:15pm", requestedAt: "2026-05-31 09:12", status: "pending" },
-  { id: "c2", employee: "Zain Abbas", date: "2026-05-29", reason: "System was down, missed punch-in", requestedAt: "2026-05-29 10:01", status: "pending" },
-  { id: "c3", employee: "Bilal Ahmed", date: "2026-05-27", reason: "On-site meeting, no office punch", requestedAt: "2026-05-28 08:30", status: "approved" },
-];
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  approveAttendanceCorrection,
+  getAttendanceCorrections,
+  type AttendanceCorrection,
+} from "@/lib/api/attendance";
+import { useEmployees } from "@/hooks/useEmployees";
 
 export const Route = createFileRoute("/_app/attendance/corrections")({
   component: Corrections,
 });
 
+function formatDate(value?: string) {
+  if (!value) return "—";
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) return String(value);
+
+  return date.toLocaleDateString("en-PK", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
+
+function formatDateTime(value?: string) {
+  if (!value) return "—";
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) return String(value);
+
+  return date.toLocaleString("en-PK", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 function Corrections() {
+  const qc = useQueryClient();
+
+  const { data: employeesRaw = [] } = useEmployees();
+
+  const employees = Array.isArray(employeesRaw)
+    ? employeesRaw
+    : [];
+
+  function getEmployeeName(employeeId?: string) {
+    const employee = employees.find(
+      (e) => e.employeeId === employeeId
+    );
+
+    return employee?.name || employeeId || "Unknown";
+  }
+
+  const {
+    data: corrections = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["attendanceCorrections"],
+    queryFn: getAttendanceCorrections,
+  });
+
+  const approveMutation = useMutation({
+    mutationFn: approveAttendanceCorrection,
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["attendanceCorrections"] });
+      qc.invalidateQueries({ queryKey: ["attendance"] });
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <div className="rounded-2xl border bg-card p-6 text-sm text-muted-foreground">
+        Loading correction requests...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-sm text-red-700">
+        {error instanceof Error ? error.message : "Something went wrong"}
+      </div>
+    );
+  }
+
   return (
-    <DataTable<Correction>
-      rowKey={(r) => r.id}
-      data={data}
+    <DataTable<AttendanceCorrection>
+      rowKey={(r) => r.correctionId}
+      data={corrections}
       columns={[
-        { key: "employee", header: "Employee", render: (r) => <span className="font-medium">{r.employee}</span> },
-        { key: "date", header: "Date" },
-        { key: "reason", header: "Reason", render: (r) => <span className="text-muted-foreground">{r.reason}</span> },
-        { key: "requestedAt", header: "Requested" },
-        { key: "status", header: "Status", render: (r) => <StatusBadge status={r.status} /> },
-        { key: "actions", header: "", className: "text-right", render: () => (
-          <div className="flex justify-end gap-1.5">
-            <Button size="sm" variant="outline" className="h-7"><Check className="h-3 w-3 mr-1" />Approve</Button>
-            <Button size="sm" variant="outline" className="h-7"><X className="h-3 w-3 mr-1" />Reject</Button>
-          </div>
-        )},
+        {
+          key: "employee",
+          header: "Employee",
+          render: (r) => (
+            <span className="font-medium">
+              {r.employeeName || getEmployeeName(r.employeeId)}
+            </span>
+          ),
+        },
+        {
+          key: "attendanceDate",
+          header: "Date",
+          render: (r) => formatDate(r.attendanceDate),
+        },
+        {
+          key: "requestType",
+          header: "Type",
+          render: (r) => (
+            <span className="font-mono text-xs text-muted-foreground">
+              {r.requestType}
+            </span>
+          ),
+        },
+        {
+          key: "oldValue",
+          header: "Old",
+          render: (r) => (
+            <span className="text-xs text-muted-foreground">
+              {r.oldValue || "—"}
+            </span>
+          ),
+        },
+        {
+          key: "newValue",
+          header: "New",
+          render: (r) => (
+            <span className="text-xs font-medium">
+              {r.newValue || "—"}
+            </span>
+          ),
+        },
+        {
+          key: "reason",
+          header: "Reason",
+          render: (r) => (
+            <span className="text-muted-foreground">
+              {r.reason || "—"}
+            </span>
+          ),
+        },
+        {
+          key: "createdAt",
+          header: "Requested",
+          render: (r) => formatDateTime(r.createdAt),
+        },
+        {
+          key: "status",
+          header: "Status",
+          render: (r) => <StatusBadge status={r.status} />,
+        },
+        {
+          key: "actions",
+          header: "",
+          className: "text-right",
+          render: (r) => {
+            const isPending = r.status === "Pending";
+
+            return (
+              <div className="flex justify-end gap-1.5">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-7"
+                  disabled={!isPending || approveMutation.isPending}
+                  onClick={() =>
+                    approveMutation.mutate(r.correctionId)
+                  }
+                >
+                  <Check className="h-3 w-3 mr-1" />
+                  Approve
+                </Button>
+
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-7"
+                  disabled
+                >
+                  <X className="h-3 w-3 mr-1" />
+                  Reject
+                </Button>
+              </div>
+            );
+          },
+        },
       ]}
     />
   );
