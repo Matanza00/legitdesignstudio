@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEmployees } from "@/hooks/useEmployees";
-import { CURRENT_EMPLOYEE_ID } from "@/lib/currentEmployee";
+
 
 export const Route = createFileRoute("/employee/profile")({
   component: EmployeeProfile,

@@ -8,7 +8,7 @@ import { useAttendance } from "@/hooks/useAttendance";
 import { useQuery } from "@tanstack/react-query";
 import { getLeaveRequests } from "@/lib/api/leaves";
 import { getPayroll } from "@/lib/api/payroll";
-import { CURRENT_EMPLOYEE_ID } from "@/lib/currentEmployee";
+
 
 export const Route = createFileRoute("/employee/")({
   component: EmployeeDashboard,

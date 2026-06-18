@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { getPayroll, type PayrollRecord } from "@/lib/api/payroll";
-import { CURRENT_EMPLOYEE_ID } from "@/lib/currentEmployee";
+
 import { DataTable } from "@/components/shared/DataTable";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 
