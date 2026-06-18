@@ -9,8 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as EmployeeRouteImport } from './routes/employee'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EmployeeIndexRouteImport } from './routes/employee.index'
+import { Route as EmployeeProfileRouteImport } from './routes/employee.profile'
+import { Route as EmployeePayrollRouteImport } from './routes/employee.payroll'
+import { Route as EmployeeLeavesRouteImport } from './routes/employee.leaves'
+import { Route as EmployeeDocumentsRouteImport } from './routes/employee.documents'
+import { Route as EmployeeDashboardRouteImport } from './routes/employee.dashboard'
+import { Route as EmployeeAttendanceRouteImport } from './routes/employee.attendance'
+import { Route as EmployeeApplicationsRouteImport } from './routes/employee.applications'
 import { Route as AppSpecialWorkingDaysRouteImport } from './routes/_app.special-working-days'
 import { Route as AppSettingsRouteImport } from './routes/_app.settings'
 import { Route as AppReportsRouteImport } from './routes/_app.reports'
@@ -34,6 +43,11 @@ import { Route as AppAccountsExpensesRouteImport } from './routes/_app.accounts.
 import { Route as AppEmployeesIdIndexRouteImport } from './routes/_app.employees.$id.index'
 import { Route as AppEmployeesIdEditRouteImport } from './routes/_app.employees.$id.edit'
 
+const EmployeeRoute = EmployeeRouteImport.update({
+  id: '/employee',
+  path: '/employee',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppRoute = AppRouteImport.update({
   id: '/_app',
   getParentRoute: () => rootRouteImport,
@@ -42,6 +56,46 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const EmployeeIndexRoute = EmployeeIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeeProfileRoute = EmployeeProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeePayrollRoute = EmployeePayrollRouteImport.update({
+  id: '/payroll',
+  path: '/payroll',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeeLeavesRoute = EmployeeLeavesRouteImport.update({
+  id: '/leaves',
+  path: '/leaves',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeeDocumentsRoute = EmployeeDocumentsRouteImport.update({
+  id: '/documents',
+  path: '/documents',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeeDashboardRoute = EmployeeDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeeAttendanceRoute = EmployeeAttendanceRouteImport.update({
+  id: '/attendance',
+  path: '/attendance',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeeApplicationsRoute = EmployeeApplicationsRouteImport.update({
+  id: '/applications',
+  path: '/applications',
+  getParentRoute: () => EmployeeRoute,
 } as any)
 const AppSpecialWorkingDaysRoute = AppSpecialWorkingDaysRouteImport.update({
   id: '/special-working-days',
@@ -158,6 +212,7 @@ const AppEmployeesIdEditRoute = AppEmployeesIdEditRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/employee': typeof EmployeeRouteWithChildren
   '/accounts': typeof AppAccountsRouteWithChildren
   '/attendance': typeof AppAttendanceRouteWithChildren
   '/dashboard': typeof AppDashboardRoute
@@ -168,6 +223,14 @@ export interface FileRoutesByFullPath {
   '/reports': typeof AppReportsRoute
   '/settings': typeof AppSettingsRoute
   '/special-working-days': typeof AppSpecialWorkingDaysRoute
+  '/employee/applications': typeof EmployeeApplicationsRoute
+  '/employee/attendance': typeof EmployeeAttendanceRoute
+  '/employee/dashboard': typeof EmployeeDashboardRoute
+  '/employee/documents': typeof EmployeeDocumentsRoute
+  '/employee/leaves': typeof EmployeeLeavesRoute
+  '/employee/payroll': typeof EmployeePayrollRoute
+  '/employee/profile': typeof EmployeeProfileRoute
+  '/employee/': typeof EmployeeIndexRoute
   '/accounts/expenses': typeof AppAccountsExpensesRoute
   '/accounts/profit-distribution': typeof AppAccountsProfitDistributionRoute
   '/accounts/reserve': typeof AppAccountsReserveRoute
@@ -193,6 +256,14 @@ export interface FileRoutesByTo {
   '/reports': typeof AppReportsRoute
   '/settings': typeof AppSettingsRoute
   '/special-working-days': typeof AppSpecialWorkingDaysRoute
+  '/employee/applications': typeof EmployeeApplicationsRoute
+  '/employee/attendance': typeof EmployeeAttendanceRoute
+  '/employee/dashboard': typeof EmployeeDashboardRoute
+  '/employee/documents': typeof EmployeeDocumentsRoute
+  '/employee/leaves': typeof EmployeeLeavesRoute
+  '/employee/payroll': typeof EmployeePayrollRoute
+  '/employee/profile': typeof EmployeeProfileRoute
+  '/employee': typeof EmployeeIndexRoute
   '/accounts/expenses': typeof AppAccountsExpensesRoute
   '/accounts/profit-distribution': typeof AppAccountsProfitDistributionRoute
   '/accounts/reserve': typeof AppAccountsReserveRoute
@@ -210,6 +281,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
+  '/employee': typeof EmployeeRouteWithChildren
   '/_app/accounts': typeof AppAccountsRouteWithChildren
   '/_app/attendance': typeof AppAttendanceRouteWithChildren
   '/_app/dashboard': typeof AppDashboardRoute
@@ -220,6 +292,14 @@ export interface FileRoutesById {
   '/_app/reports': typeof AppReportsRoute
   '/_app/settings': typeof AppSettingsRoute
   '/_app/special-working-days': typeof AppSpecialWorkingDaysRoute
+  '/employee/applications': typeof EmployeeApplicationsRoute
+  '/employee/attendance': typeof EmployeeAttendanceRoute
+  '/employee/dashboard': typeof EmployeeDashboardRoute
+  '/employee/documents': typeof EmployeeDocumentsRoute
+  '/employee/leaves': typeof EmployeeLeavesRoute
+  '/employee/payroll': typeof EmployeePayrollRoute
+  '/employee/profile': typeof EmployeeProfileRoute
+  '/employee/': typeof EmployeeIndexRoute
   '/_app/accounts/expenses': typeof AppAccountsExpensesRoute
   '/_app/accounts/profit-distribution': typeof AppAccountsProfitDistributionRoute
   '/_app/accounts/reserve': typeof AppAccountsReserveRoute
@@ -237,6 +317,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/employee'
     | '/accounts'
     | '/attendance'
     | '/dashboard'
@@ -247,6 +328,14 @@ export interface FileRouteTypes {
     | '/reports'
     | '/settings'
     | '/special-working-days'
+    | '/employee/applications'
+    | '/employee/attendance'
+    | '/employee/dashboard'
+    | '/employee/documents'
+    | '/employee/leaves'
+    | '/employee/payroll'
+    | '/employee/profile'
+    | '/employee/'
     | '/accounts/expenses'
     | '/accounts/profit-distribution'
     | '/accounts/reserve'
@@ -272,6 +361,14 @@ export interface FileRouteTypes {
     | '/reports'
     | '/settings'
     | '/special-working-days'
+    | '/employee/applications'
+    | '/employee/attendance'
+    | '/employee/dashboard'
+    | '/employee/documents'
+    | '/employee/leaves'
+    | '/employee/payroll'
+    | '/employee/profile'
+    | '/employee'
     | '/accounts/expenses'
     | '/accounts/profit-distribution'
     | '/accounts/reserve'
@@ -288,6 +385,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_app'
+    | '/employee'
     | '/_app/accounts'
     | '/_app/attendance'
     | '/_app/dashboard'
@@ -298,6 +396,14 @@ export interface FileRouteTypes {
     | '/_app/reports'
     | '/_app/settings'
     | '/_app/special-working-days'
+    | '/employee/applications'
+    | '/employee/attendance'
+    | '/employee/dashboard'
+    | '/employee/documents'
+    | '/employee/leaves'
+    | '/employee/payroll'
+    | '/employee/profile'
+    | '/employee/'
     | '/_app/accounts/expenses'
     | '/_app/accounts/profit-distribution'
     | '/_app/accounts/reserve'
@@ -315,10 +421,18 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
+  EmployeeRoute: typeof EmployeeRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/employee': {
+      id: '/employee'
+      path: '/employee'
+      fullPath: '/employee'
+      preLoaderRoute: typeof EmployeeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_app': {
       id: '/_app'
       path: ''
@@ -332,6 +446,62 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/employee/': {
+      id: '/employee/'
+      path: '/'
+      fullPath: '/employee/'
+      preLoaderRoute: typeof EmployeeIndexRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/profile': {
+      id: '/employee/profile'
+      path: '/profile'
+      fullPath: '/employee/profile'
+      preLoaderRoute: typeof EmployeeProfileRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/payroll': {
+      id: '/employee/payroll'
+      path: '/payroll'
+      fullPath: '/employee/payroll'
+      preLoaderRoute: typeof EmployeePayrollRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/leaves': {
+      id: '/employee/leaves'
+      path: '/leaves'
+      fullPath: '/employee/leaves'
+      preLoaderRoute: typeof EmployeeLeavesRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/documents': {
+      id: '/employee/documents'
+      path: '/documents'
+      fullPath: '/employee/documents'
+      preLoaderRoute: typeof EmployeeDocumentsRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/dashboard': {
+      id: '/employee/dashboard'
+      path: '/dashboard'
+      fullPath: '/employee/dashboard'
+      preLoaderRoute: typeof EmployeeDashboardRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/attendance': {
+      id: '/employee/attendance'
+      path: '/attendance'
+      fullPath: '/employee/attendance'
+      preLoaderRoute: typeof EmployeeAttendanceRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/applications': {
+      id: '/employee/applications'
+      path: '/applications'
+      fullPath: '/employee/applications'
+      preLoaderRoute: typeof EmployeeApplicationsRouteImport
+      parentRoute: typeof EmployeeRoute
     }
     '/_app/special-working-days': {
       id: '/_app/special-working-days'
@@ -582,9 +752,36 @@ const AppRouteChildren: AppRouteChildren = {
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
+interface EmployeeRouteChildren {
+  EmployeeApplicationsRoute: typeof EmployeeApplicationsRoute
+  EmployeeAttendanceRoute: typeof EmployeeAttendanceRoute
+  EmployeeDashboardRoute: typeof EmployeeDashboardRoute
+  EmployeeDocumentsRoute: typeof EmployeeDocumentsRoute
+  EmployeeLeavesRoute: typeof EmployeeLeavesRoute
+  EmployeePayrollRoute: typeof EmployeePayrollRoute
+  EmployeeProfileRoute: typeof EmployeeProfileRoute
+  EmployeeIndexRoute: typeof EmployeeIndexRoute
+}
+
+const EmployeeRouteChildren: EmployeeRouteChildren = {
+  EmployeeApplicationsRoute: EmployeeApplicationsRoute,
+  EmployeeAttendanceRoute: EmployeeAttendanceRoute,
+  EmployeeDashboardRoute: EmployeeDashboardRoute,
+  EmployeeDocumentsRoute: EmployeeDocumentsRoute,
+  EmployeeLeavesRoute: EmployeeLeavesRoute,
+  EmployeePayrollRoute: EmployeePayrollRoute,
+  EmployeeProfileRoute: EmployeeProfileRoute,
+  EmployeeIndexRoute: EmployeeIndexRoute,
+}
+
+const EmployeeRouteWithChildren = EmployeeRoute._addFileChildren(
+  EmployeeRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
+  EmployeeRoute: EmployeeRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
