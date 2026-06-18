@@ -1,3 +1,6 @@
+import { useState } from "react";
+import {  } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   createFileRoute,
   Link,
@@ -12,6 +15,8 @@ import {
   TrendingDown,
   PiggyBank,
   BadgeDollarSign,
+  CalendarDays,
+  BarChart3,
 } from "lucide-react";
 import {
   Area,
@@ -93,6 +98,7 @@ function Overview() {
     queryKey: ["accountsOverview"],
     queryFn: getAccountsOverview,
   });
+  const [viewMode, setViewMode] = useState<"overall" | "monthly">("overall");
 
   if (isLoading) {
     return (
@@ -130,34 +136,91 @@ function Overview() {
   const monthlyExpense = Number(currentMonthData?.expense || 0);
   const monthlyProfit = monthlyRevenue - monthlyExpense;
   const monthlyReserve = monthlyProfit > 0 ? monthlyProfit * 0.3 : 0;
+  const selectedMonthLabel = new Date(
+    `${selectedMonth}-01`
+  ).toLocaleDateString("en-US", {
+    month: "short",
+    year: "numeric",
+  });
+
+  const isMonthly = viewMode === "monthly";
+
+  const cardLabelSuffix = isMonthly ? selectedMonthLabel : "MTD";
+
+  const cardValues = isMonthly
+    ? {
+        revenue: monthlyRevenue,
+        expenses: monthlyExpense,
+        profit: monthlyProfit,
+        reserve: monthlyReserve,
+      }
+    : {
+        revenue: summary.totalRevenue,
+        expenses: summary.totalExpenses,
+        profit: summary.netProfit,
+        reserve: summary.reserveBalance,
+      };
 
   return (
     <>
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <div>
+          <h3 className="text-sm font-semibold">
+            {isMonthly ? "Monthly Summary" : "Overall Summary"}
+          </h3>
+          <p className="text-xs text-muted-foreground">
+            {isMonthly
+              ? `Showing data for ${selectedMonthLabel}`
+              : "Showing all-time account totals"}
+          </p>
+        </div>
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() =>
+            setViewMode((prev) => (prev === "overall" ? "monthly" : "overall"))
+          }
+        >
+          {isMonthly ? (
+            <>
+              <BarChart3 className="mr-1.5 h-3.5 w-3.5" />
+              Show Overall
+            </>
+          ) : (
+            <>
+              <CalendarDays className="mr-1.5 h-3.5 w-3.5" />
+              Show Monthly
+            </>
+          )}
+        </Button>
+      </div>
+
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         <StatCard
-          label="Revenue (MTD)"
-          value={formatPKR(summary.totalRevenue)}
+          label={`Revenue (${cardLabelSuffix})`}
+          value={formatPKR(cardValues.revenue)}
           icon={TrendingUp}
           tone="success"
         />
 
         <StatCard
-          label="Expenses (MTD)"
-          value={formatPKR(summary.totalExpenses)}
+          label={`Expenses (${cardLabelSuffix})`}
+          value={formatPKR(cardValues.expenses)}
           icon={TrendingDown}
           tone="warning"
         />
 
         <StatCard
-          label="Net Profit"
-          value={formatPKR(summary.netProfit)}
+          label={`Profit (${cardLabelSuffix})`}
+          value={formatPKR(cardValues.profit)}
           icon={BadgeDollarSign}
-          tone={summary.netProfit >= 0 ? "success" : "danger"}
+          tone={cardValues.profit >= 0 ? "success" : "danger"}
         />
 
         <StatCard
-          label="Reserve"
-          value={formatPKR(summary.reserveBalance)}
+          label={`Reserve (${cardLabelSuffix})`}
+          value={formatPKR(cardValues.reserve)}
           icon={PiggyBank}
           tone="accent"
         />
@@ -282,35 +345,6 @@ function Overview() {
 
         
       </div>
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          <StatCard
-            label={`Revenue (${selectedMonth})`}
-            value={formatPKR(monthlyRevenue)}
-            icon={TrendingUp}
-            tone="success"
-          />
-
-          <StatCard
-            label={`Expenses (${selectedMonth})`}
-            value={formatPKR(monthlyExpense)}
-            icon={TrendingDown}
-            tone="warning"
-          />
-
-          <StatCard
-            label={`Profit (${selectedMonth})`}
-            value={formatPKR(monthlyProfit)}
-            icon={BadgeDollarSign}
-            tone={monthlyProfit >= 0 ? "success" : "danger"}
-          />
-
-          <StatCard
-            label={`Reserve (${selectedMonth})`}
-            value={formatPKR(monthlyReserve)}
-            icon={PiggyBank}
-            tone="accent"
-          />
-        </div>
     </>
   );
 }

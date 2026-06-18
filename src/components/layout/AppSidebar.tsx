@@ -33,8 +33,8 @@ export function AppSidebar() {
     <Sidebar collapsible="icon" className="border-r">
       <SidebarHeader className="border-b">
         <div className="flex items-center gap-2.5 px-2 py-3">
-          <div className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-primary-foreground shadow-sm">
-            <Sparkles className="h-4.5 w-4.5" />
+          <div className="grid h-12 w-12 place-items-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+            <span className="text-lg font-bold">LDS</span>
           </div>
           {!collapsed && (
             <div className="flex flex-col leading-tight">
