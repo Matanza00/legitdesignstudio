@@ -1,3 +1,4 @@
+import { CURRENT_EMPLOYEE_CODE, CURRENT_EMPLOYEE_ID } from "@/lib/currentEmployee";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEmployees } from "@/hooks/useEmployees";
 
