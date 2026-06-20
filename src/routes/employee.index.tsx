@@ -1,3 +1,4 @@
+import { CURRENT_EMPLOYEE_CODE, CURRENT_EMPLOYEE_ID } from "@/lib/currentEmployee";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { StatCard } from "@/components/shared/StatCard";
 import { StatusBadge } from "@/components/shared/StatusBadge";
